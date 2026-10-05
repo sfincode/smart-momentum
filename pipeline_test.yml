@@ -1,0 +1,82 @@
+name: Smart Momentum Pipeline
+
+on:
+  # 1. Manual trigger for the 2025-07-11 test run
+  workflow_dispatch:
+    inputs:
+      run_date:
+        description: 'Simulation Cut-off Date (YYYY-MM-DD)'
+        required: true
+        default: '2025-07-11'
+        
+  # 2. Scheduled trigger for production (Every 2 hours during market hours, Mon-Fri)
+  # Times are UTC: 13:30, 15:30, 17:30, 19:30, 21:30 (approx 9:30 AM to 5:30 PM ET)
+  schedule:
+    - cron: '30 13,15,17,19,21 * * 1-5'
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Determine Run Date
+      id: date
+      run: |
+        if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+          echo "RUN_DATE=${{ github.event.inputs.run_date }}" >> $GITHUB_ENV
+        else
+          echo "RUN_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+        fi
+      shell: bash
+
+    - name: Run Universe & Data Fetch
+      env:
+        MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+        EQUABLES_API_KEY: ${{ secrets.EQUABLES_API_KEY }}
+      run: |
+        echo "Running pipeline for date: $RUN_DATE"
+        python -m stock_signals.cli build-universe --date $RUN_DATE
+        python -m stock_signals.cli fetch-data --date $RUN_DATE
+
+    - name: Run Features & Signals
+      run: |
+        python -m stock_signals.cli build-weekly-features --date $RUN_DATE
+        python -m stock_signals.cli generate-weekly-signals --date $RUN_DATE
+
+    - name: Run Simulation & Metrics
+      run: |
+        python -m stock_signals.cli simulate-weekly-portfolio --date $RUN_DATE
+        python metrics.py
+
+    - name: Export Sanitized Public Demo Data
+      run: |
+        python export_demo_data.py
+
+    - name: Upload Public Demo Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: public-demo-data
+        path: data/public_demo/
+        
+    - name: Upload Internal Parquet Artifacts (For Debugging)
+      uses: actions/upload-artifact@v4
+      with:
+        name: internal-parquets
+        path: |
+          data/portfolio/summary/v1/
+          data/portfolio/trades/v1/
+          data/portfolio/open_positions/
