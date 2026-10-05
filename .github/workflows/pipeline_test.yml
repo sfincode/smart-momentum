@@ -7,8 +7,6 @@ on:
         description: 'Simulation Cut-off Date (YYYY-MM-DD)'
         required: true
         default: '2025-07-11'
-  schedule:
-    - cron: '30 13,15,17,19,21 * * 1-5'
 
 jobs:
   run-pipeline:
@@ -21,78 +19,55 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Debug - Show Directory Structure
+      run: |
+        echo "=== Current Directory ==="
+        pwd
+        echo ""
+        echo "=== Files in Repository Root ==="
+        ls -la
+        echo ""
+        echo "=== Looking for src directory ==="
+        if [ -d "src" ]; then
+          echo "✓ src/ EXISTS"
+          echo ""
+          echo "Contents of src/:"
+          ls -la src/
+          echo ""
+          echo "Looking for stock_signals in src/:"
+          find src/ -type d -name "stock_signals" 2>/dev/null
+          echo ""
+          echo "Looking for cli.py:"
+          find . -name "cli.py" 2>/dev/null
+        else
+          echo "✗ src/ DOES NOT EXIST"
+          echo ""
+          echo "Searching for stock_signals anywhere:"
+          find . -type d -name "stock_signals" 2>/dev/null
+          echo ""
+          echo "Searching for cli.py anywhere:"
+          find . -name "cli.py" 2>/dev/null
+        fi
+        echo ""
+        echo "=== PYTHONPATH ==="
+        echo $PYTHONPATH
+        echo ""
+        echo "=== Python sys.path ==="
+        python -c "import sys; print('\n'.join(sys.path))"
+        echo ""
+        echo "=== Trying to import stock_signals ==="
+        python -c "import stock_signals; print('SUCCESS:', stock_signals.__file__)" || echo "FAILED: stock_signals not found"
+
     - name: Set up Python 3.11
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-        cache: 'pip'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Determine Run Date
-      id: date
+    - name: Try Import After Install
       run: |
-        if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-          echo "RUN_DATE=${{ github.event.inputs.run_date }}" >> $GITHUB_ENV
-        else
-          echo "RUN_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-        fi
-      shell: bash
-
-    - name: Debug - Show Directory Structure
-      run: |
-        echo "=== Current Directory ==="
-        pwd
-        echo ""
-        echo "=== Repository Root Contents ==="
-        ls -la
-        echo ""
-        echo "=== Looking for src directory ==="
-        if [ -d "src" ]; then
-          echo "src/ EXISTS"
-          ls src/
-        else
-          echo "src/ DOES NOT EXIST"
-        fi
-        echo ""
-        echo "=== Looking for stock_signals anywhere ==="
-        find . -type d -name "stock_signals" | head -5
-        echo ""
-        echo "=== Looking for cli.py anywhere ==="
-        find . -name "cli.py" | head -5
-        echo ""
-        echo "=== Python path ==="
-        echo $PYTHONPATH
-        python -c "import sys; print(sys.path)"
-
-    - name: Run Features & Signals
-      run: |
-        python -m stock_signals.cli build-weekly-features --date $RUN_DATE
-        python -m stock_signals.cli generate-weekly-signals --date $RUN_DATE
-
-    - name: Run Simulation & Metrics
-      run: |
-        python -m stock_signals.cli simulate-weekly-portfolio --date $RUN_DATE
-        python metrics.py
-
-    - name: Export Sanitized Public Demo Data
-      run: |
-        python export_demo_data.py
-
-    - name: Upload Public Demo Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: public-demo-data
-        path: data/public_demo/
-        
-    - name: Upload Internal Parquet Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: internal-parquets
-        path: |
-          data/portfolio/summary/v1/
-          data/portfolio/trades/v1/
-          data/portfolio/open_positions/
+        python -c "import stock_signals; print('SUCCESS after pip install:', stock_signals.__file__)" || echo "STILL FAILED"
