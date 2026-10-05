@@ -42,11 +42,31 @@ jobs:
         fi
       shell: bash
 
-    - name: Run Universe & Data Fetch
+    - name: Debug - Show Directory Structure
       run: |
-        echo "Running pipeline for date: $RUN_DATE"
-        python -m stock_signals.cli build-universe --date $RUN_DATE
-        python -m stock_signals.cli fetch-data --date $RUN_DATE
+        echo "=== Current Directory ==="
+        pwd
+        echo ""
+        echo "=== Repository Root Contents ==="
+        ls -la
+        echo ""
+        echo "=== Looking for src directory ==="
+        if [ -d "src" ]; then
+          echo "src/ EXISTS"
+          ls src/
+        else
+          echo "src/ DOES NOT EXIST"
+        fi
+        echo ""
+        echo "=== Looking for stock_signals anywhere ==="
+        find . -type d -name "stock_signals" | head -5
+        echo ""
+        echo "=== Looking for cli.py anywhere ==="
+        find . -name "cli.py" | head -5
+        echo ""
+        echo "=== Python path ==="
+        echo $PYTHONPATH
+        python -c "import sys; print(sys.path)"
 
     - name: Run Features & Signals
       run: |
