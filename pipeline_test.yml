@@ -17,7 +17,8 @@ on:
 jobs:
   run-pipeline:
     runs-on: ubuntu-latest
-    
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src   # <--- ADD THIS LINE
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
