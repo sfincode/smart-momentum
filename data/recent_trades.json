@@ -70,18 +70,18 @@
     "trade_return":0.0970839478
   },
   {
+    "portfolio_id":"active_sp500",
+    "ticker":"TER",
+    "entry_date":"2025-05-16",
+    "exit_date":"2025-05-22",
+    "trade_return":-0.0514126674
+  },
+  {
     "portfolio_id":"active_midcap400",
     "ticker":"DOCN",
     "entry_date":"2025-05-09",
     "exit_date":"2025-05-21",
     "trade_return":-0.0438538099
-  },
-  {
-    "portfolio_id":"active_sp500",
-    "ticker":"TGT",
-    "entry_date":"2025-05-16",
-    "exit_date":"2025-05-21",
-    "trade_return":-0.0485883245
   },
   {
     "portfolio_id":"active_nasdaq100",

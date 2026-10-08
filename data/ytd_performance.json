@@ -2,22 +2,31 @@
   {
     "portfolio_id":"active_midcap400",
     "benchmark_ticker":"MDY",
-    "portfolio_return":1.4323060648,
-    "benchmark_return":4.5988993774,
-    "active_return":-3.1665933126
+    "window_type":"trailing_6m",
+    "window_start":"2024-12-27",
+    "window_end":"2025-06-27",
+    "portfolio_return":-0.0258362833,
+    "benchmark_return":-0.0043617751,
+    "active_return":-0.0214745083
   },
   {
     "portfolio_id":"active_sp500",
     "benchmark_ticker":"SPY",
-    "portfolio_return":8.1404012795,
-    "benchmark_return":6.3328584119,
-    "active_return":1.8075428676
+    "window_type":"trailing_6m",
+    "window_start":"2024-12-27",
+    "window_end":"2025-06-27",
+    "portfolio_return":0.1573063838,
+    "benchmark_return":0.0396179532,
+    "active_return":0.1176884307
   },
   {
     "portfolio_id":"active_nasdaq100",
     "benchmark_ticker":"QQQ",
-    "portfolio_return":5.0737044823,
-    "benchmark_return":15.7981704188,
-    "active_return":-10.7244659366
+    "window_type":"trailing_6m",
+    "window_start":"2024-12-27",
+    "window_end":"2025-06-27",
+    "portfolio_return":0.0073430692,
+    "benchmark_return":0.0515996983,
+    "active_return":-0.0442566291
   }
 ]
