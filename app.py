@@ -94,31 +94,29 @@ if selected_ticker:
         ticker_obj = yf.Ticker(selected_ticker)
         hist = ticker_obj.history(start=fetch_start, end=max_date + pd.Timedelta(days=1))
         
+        # FIX: Strip timezone info from yfinance data to match tz-naive dates from JSON
+        hist.index = hist.index.tz_localize(None)
+        
         if hist.empty:
             st.warning(f"Could not fetch price data for {selected_ticker}.")
         else:
             fig = go.Figure()
             
-            # Plot the daily close price
             fig.add_trace(go.Scatter(
                 x=hist.index, y=hist['Close'], mode='lines', name='Daily Close', 
                 line=dict(color='#1f77b4', width=2)
             ))
             
-            # Highlight the evaluation window background
             fig.add_vrect(x0=start_date, x1=max_date, fillcolor="green", opacity=0.05, line_width=0, annotation_text=f"   {window_label} Window", annotation_position="top left")
 
-            # Helper function to find the exact price on a specific date from the yfinance data
             def get_price_on_date(target_date, hist_df):
                 if target_date in hist_df.index:
                     return hist_df.loc[target_date, 'Close']
-                # Fallback for weekends/holidays: find the closest prior trading day
                 mask = hist_df.index <= target_date
                 if mask.any():
                     return hist_df.loc[mask, 'Close'].iloc[-1]
                 return None
 
-            # --- MARK ENTRIES ---
             entries = [t for t in recent_trades if t['ticker'] == selected_ticker and pd.to_datetime(t['entry_date']) >= start_date]
             entries += [p for p in live_picks if p['ticker'] == selected_ticker and pd.to_datetime(p['entry_date']) >= start_date]
             
@@ -138,7 +136,6 @@ if selected_ticker:
                     text=[f"${p:.2f}" for p in entry_prices], textposition="top center", textfont=dict(color="green", size=12)
                 ))
 
-            # --- MARK EXITS (Closed Trades) ---
             exits = [t for t in recent_trades if t['ticker'] == selected_ticker and pd.to_datetime(t['exit_date']) >= start_date]
             
             exit_dates = []
@@ -157,13 +154,11 @@ if selected_ticker:
                     text=[f"${p:.2f}" for p in exit_prices], textposition="bottom center", textfont=dict(color="red", size=12)
                 ))
 
-            # --- MARK CURRENT HOLDINGS (Open Positions) ---
             opens = [p for p in live_picks if p['ticker'] == selected_ticker and pd.to_datetime(p['entry_date']) >= start_date]
             if opens:
                 current_dates = []
                 current_prices = []
                 for p in opens:
-                    # Use the latest date in the chart for the current price
                     price = get_price_on_date(max_date, hist)
                     if price is not None:
                         current_dates.append(max_date)
