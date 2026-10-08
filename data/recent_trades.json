@@ -1,352 +1,352 @@
 [
   {
-    "portfolio_id":"active_sp500",
-    "ticker":"DDOG",
-    "entry_date":"2025-05-02",
-    "exit_date":"2025-07-08",
-    "trade_return":0.3623972993
+    "portfolio_id":"active_nasdaq100",
+    "ticker":"WDC",
+    "entry_date":"2026-10-02",
+    "exit_date":"2026-10-06",
+    "trade_return":-0.0287334672
   },
   {
     "portfolio_id":"active_midcap400",
-    "ticker":"WLK",
-    "entry_date":"2025-06-13",
-    "exit_date":"2025-06-17",
-    "trade_return":-0.0566717755
-  },
-  {
-    "portfolio_id":"active_sp500",
-    "ticker":"TMO",
-    "entry_date":"2025-06-06",
-    "exit_date":"2025-06-17",
-    "trade_return":-0.0247043188
-  },
-  {
-    "portfolio_id":"active_midcap400",
-    "ticker":"COLM",
-    "entry_date":"2025-06-06",
-    "exit_date":"2025-06-13",
-    "trade_return":-0.0289902463
+    "ticker":"HR",
+    "entry_date":"2026-09-18",
+    "exit_date":"2026-10-05",
+    "trade_return":-0.0651341272
   },
   {
     "portfolio_id":"active_sp500",
-    "ticker":"TGT",
-    "entry_date":"2025-05-23",
-    "exit_date":"2025-06-13",
-    "trade_return":0.0239424614
+    "ticker":"AKAM",
+    "entry_date":"2026-09-25",
+    "exit_date":"2026-09-28",
+    "trade_return":-0.1296814266
   },
   {
-    "portfolio_id":"active_midcap400",
-    "ticker":"CHH",
-    "entry_date":"2025-05-02",
-    "exit_date":"2025-06-02",
-    "trade_return":-0.0244878695
+    "portfolio_id":"active_sp500",
+    "ticker":"AKAM",
+    "entry_date":"2026-09-18",
+    "exit_date":"2026-09-24",
+    "trade_return":0.0294639036
   },
   {
-    "portfolio_id":"active_midcap400",
-    "ticker":"ANF",
-    "entry_date":"2025-05-30",
-    "exit_date":"2025-06-02",
-    "trade_return":-0.0563719645
+    "portfolio_id":"active_sp500",
+    "ticker":"NI",
+    "entry_date":"2026-09-11",
+    "exit_date":"2026-09-23",
+    "trade_return":-0.0573967201
+  },
+  {
+    "portfolio_id":"active_sp500",
+    "ticker":"AZO",
+    "entry_date":"2026-08-28",
+    "exit_date":"2026-09-21",
+    "trade_return":-0.0472168248
+  },
+  {
+    "portfolio_id":"active_sp500",
+    "ticker":"APP",
+    "entry_date":"2026-08-21",
+    "exit_date":"2026-09-18",
+    "trade_return":0.0131886529
   },
   {
     "portfolio_id":"active_nasdaq100",
-    "ticker":"LITE",
-    "entry_date":"2025-04-25",
-    "exit_date":"2025-05-30",
-    "trade_return":0.2288337156
-  },
-  {
-    "portfolio_id":"active_nasdaq100",
-    "ticker":"MRVL",
-    "entry_date":"2025-05-23",
-    "exit_date":"2025-05-30",
-    "trade_return":0.0006649788
-  },
-  {
-    "portfolio_id":"active_midcap400",
-    "ticker":"ANF",
-    "entry_date":"2025-05-23",
-    "exit_date":"2025-05-29",
-    "trade_return":0.1211016776
+    "ticker":"APP",
+    "entry_date":"2026-09-11",
+    "exit_date":"2026-09-18",
+    "trade_return":-0.0237054281
   },
   {
     "portfolio_id":"active_sp500",
-    "ticker":"LULU",
-    "entry_date":"2025-05-09",
-    "exit_date":"2025-05-23",
-    "trade_return":0.0970839478
+    "ticker":"APTV",
+    "entry_date":"2026-09-04",
+    "exit_date":"2026-09-15",
+    "trade_return":-0.0601503605
   },
   {
-    "portfolio_id":"active_nasdaq100",
-    "ticker":"TXN",
-    "entry_date":"2025-05-02",
-    "exit_date":"2025-05-23",
-    "trade_return":0.0900209495
+    "portfolio_id":"active_midcap400",
+    "ticker":"AA",
+    "entry_date":"2026-08-14",
+    "exit_date":"2026-09-10",
+    "trade_return":-0.0293408186
+  },
+  {
+    "portfolio_id":"active_midcap400",
+    "ticker":"MTZ",
+    "entry_date":"2026-09-04",
+    "exit_date":"2026-09-10",
+    "trade_return":-0.0108626328
+  },
+  {
+    "portfolio_id":"active_midcap400",
+    "ticker":"WMG",
+    "entry_date":"2026-08-28",
+    "exit_date":"2026-09-08",
+    "trade_return":-0.0130281316
+  },
+  {
+    "portfolio_id":"active_midcap400",
+    "ticker":"WH",
+    "entry_date":"2026-08-28",
+    "exit_date":"2026-08-31",
+    "trade_return":-0.0501611876
   },
   {
     "portfolio_id":"active_sp500",
-    "ticker":"TER",
-    "entry_date":"2025-05-16",
-    "exit_date":"2025-05-22",
-    "trade_return":-0.0514127553
-  },
-  {
-    "portfolio_id":"active_midcap400",
-    "ticker":"DOCN",
-    "entry_date":"2025-05-09",
-    "exit_date":"2025-05-21",
-    "trade_return":-0.0438538099
-  },
-  {
-    "portfolio_id":"active_midcap400",
-    "ticker":"BIO",
-    "entry_date":"2025-03-28",
-    "exit_date":"2025-04-04",
-    "trade_return":-0.0791836486
-  },
-  {
-    "portfolio_id":"active_midcap400",
-    "ticker":"BILL",
-    "entry_date":"2025-03-28",
-    "exit_date":"2025-04-03",
-    "trade_return":-0.107479596
-  },
-  {
-    "portfolio_id":"active_sp500",
-    "ticker":"DDOG",
-    "entry_date":"2025-03-28",
-    "exit_date":"2025-04-03",
-    "trade_return":-0.088039342
-  },
-  {
-    "portfolio_id":"active_midcap400",
-    "ticker":"BWA",
-    "entry_date":"2025-03-21",
-    "exit_date":"2025-03-28",
-    "trade_return":-0.0126095357
-  },
-  {
-    "portfolio_id":"active_midcap400",
-    "ticker":"CUBE",
-    "entry_date":"2025-01-17",
-    "exit_date":"2025-03-13",
-    "trade_return":-0.0159459222
+    "ticker":"APTV",
+    "entry_date":"2026-08-21",
+    "exit_date":"2026-08-31",
+    "trade_return":-0.0586750991
   },
   {
     "portfolio_id":"active_midcap400",
     "ticker":"ATR",
-    "entry_date":"2025-02-14",
-    "exit_date":"2025-03-13",
-    "trade_return":0.007446259
+    "entry_date":"2026-06-05",
+    "exit_date":"2026-08-28",
+    "trade_return":0.1801242756
   },
   {
     "portfolio_id":"active_sp500",
-    "ticker":"ARE",
-    "entry_date":"2025-02-28",
-    "exit_date":"2025-03-13",
-    "trade_return":-0.0450546613
+    "ticker":"ALB",
+    "entry_date":"2026-08-21",
+    "exit_date":"2026-08-25",
+    "trade_return":-0.0476940401
+  },
+  {
+    "portfolio_id":"active_midcap400",
+    "ticker":"WFRD",
+    "entry_date":"2026-07-31",
+    "exit_date":"2026-08-24",
+    "trade_return":0.0384978891
   },
   {
     "portfolio_id":"active_sp500",
-    "ticker":"BALL",
-    "entry_date":"2025-02-07",
-    "exit_date":"2025-03-12",
-    "trade_return":0.0053790757
+    "ticker":"BSX",
+    "entry_date":"2026-07-17",
+    "exit_date":"2026-08-20",
+    "trade_return":0.0917734984
   },
   {
     "portfolio_id":"active_sp500",
-    "ticker":"CMG",
-    "entry_date":"2025-02-28",
-    "exit_date":"2025-03-06",
-    "trade_return":-0.0196190244
+    "ticker":"WMT",
+    "entry_date":"2026-08-07",
+    "exit_date":"2026-08-20",
+    "trade_return":-0.0612061061
+  },
+  {
+    "portfolio_id":"active_sp500",
+    "ticker":"LHX",
+    "entry_date":"2026-07-31",
+    "exit_date":"2026-08-19",
+    "trade_return":0.0150920893
+  },
+  {
+    "portfolio_id":"active_sp500",
+    "ticker":"ALLE",
+    "entry_date":"2026-06-05",
+    "exit_date":"2026-08-18",
+    "trade_return":0.2354803085
+  },
+  {
+    "portfolio_id":"active_midcap400",
+    "ticker":"ACM",
+    "entry_date":"2026-07-24",
+    "exit_date":"2026-08-11",
+    "trade_return":-0.0129544715
+  },
+  {
+    "portfolio_id":"active_sp500",
+    "ticker":"LHX",
+    "entry_date":"2026-07-24",
+    "exit_date":"2026-07-30",
+    "trade_return":-0.0961672969
+  },
+  {
+    "portfolio_id":"active_midcap400",
+    "ticker":"ACI",
+    "entry_date":"2026-07-10",
+    "exit_date":"2026-07-23",
+    "trade_return":-0.2142857775
+  },
+  {
+    "portfolio_id":"active_midcap400",
+    "ticker":"PEGA",
+    "entry_date":"2026-07-17",
+    "exit_date":"2026-07-22",
+    "trade_return":-0.1946080575
+  },
+  {
+    "portfolio_id":"active_sp500",
+    "ticker":"ALB",
+    "entry_date":"2026-07-10",
+    "exit_date":"2026-07-16",
+    "trade_return":-0.0738817564
+  },
+  {
+    "portfolio_id":"active_sp500",
+    "ticker":"ABT",
+    "entry_date":"2026-05-15",
+    "exit_date":"2026-07-14",
+    "trade_return":0.0357433643
+  },
+  {
+    "portfolio_id":"active_sp500",
+    "ticker":"AZO",
+    "entry_date":"2026-06-26",
+    "exit_date":"2026-07-06",
+    "trade_return":-0.0378771189
+  },
+  {
+    "portfolio_id":"active_sp500",
+    "ticker":"CHTR",
+    "entry_date":"2026-06-26",
+    "exit_date":"2026-07-02",
+    "trade_return":0.0523893694
+  },
+  {
+    "portfolio_id":"active_midcap400",
+    "ticker":"ACM",
+    "entry_date":"2026-06-12",
+    "exit_date":"2026-07-01",
+    "trade_return":-0.037019315
+  },
+  {
+    "portfolio_id":"active_midcap400",
+    "ticker":"CAR",
+    "entry_date":"2026-06-26",
+    "exit_date":"2026-06-29",
+    "trade_return":-0.0575159525
+  },
+  {
+    "portfolio_id":"active_sp500",
+    "ticker":"ERIE",
+    "entry_date":"2026-06-12",
+    "exit_date":"2026-06-22",
+    "trade_return":-0.0670458683
   },
   {
     "portfolio_id":"active_midcap400",
     "ticker":"ANF",
-    "entry_date":"2025-02-28",
-    "exit_date":"2025-03-04",
-    "trade_return":-0.0550584851
+    "entry_date":"2026-06-05",
+    "exit_date":"2026-06-17",
+    "trade_return":0.0826942919
   },
   {
     "portfolio_id":"active_sp500",
-    "ticker":"AES",
-    "entry_date":"2025-02-14",
-    "exit_date":"2025-03-04",
-    "trade_return":0.0649608123
+    "ticker":"DHR",
+    "entry_date":"2026-05-22",
+    "exit_date":"2026-06-17",
+    "trade_return":0.0243172508
+  },
+  {
+    "portfolio_id":"active_sp500",
+    "ticker":"CTAS",
+    "entry_date":"2026-05-29",
+    "exit_date":"2026-06-17",
+    "trade_return":-0.0114219569
   },
   {
     "portfolio_id":"active_midcap400",
-    "ticker":"ARW",
-    "entry_date":"2025-02-07",
-    "exit_date":"2025-03-03",
-    "trade_return":-0.0355186223
+    "ticker":"ACM",
+    "entry_date":"2026-05-15",
+    "exit_date":"2026-06-10",
+    "trade_return":-0.0474999944
+  },
+  {
+    "portfolio_id":"active_midcap400",
+    "ticker":"OLLI",
+    "entry_date":"2026-05-22",
+    "exit_date":"2026-06-04",
+    "trade_return":-0.0973333185
+  },
+  {
+    "portfolio_id":"active_midcap400",
+    "ticker":"HLNE",
+    "entry_date":"2026-05-29",
+    "exit_date":"2026-06-03",
+    "trade_return":-0.0812685575
+  },
+  {
+    "portfolio_id":"active_midcap400",
+    "ticker":"CHE",
+    "entry_date":"2026-04-17",
+    "exit_date":"2026-06-02",
+    "trade_return":0.0971701762
   },
   {
     "portfolio_id":"active_sp500",
-    "ticker":"ALB",
-    "entry_date":"2025-02-28",
-    "exit_date":"2025-03-03",
-    "trade_return":-0.0959027973
-  },
-  {
-    "portfolio_id":"active_sp500",
-    "ticker":"GEHC",
-    "entry_date":"2024-12-27",
-    "exit_date":"2025-02-28",
-    "trade_return":0.1016871755
-  },
-  {
-    "portfolio_id":"active_sp500",
-    "ticker":"ADBE",
-    "entry_date":"2025-01-31",
-    "exit_date":"2025-02-27",
-    "trade_return":-0.0219025646
+    "ticker":"ACN",
+    "entry_date":"2026-05-15",
+    "exit_date":"2026-06-02",
+    "trade_return":0.1119604092
   },
   {
     "portfolio_id":"active_nasdaq100",
     "ticker":"ADBE",
-    "entry_date":"2025-01-31",
-    "exit_date":"2025-02-27",
-    "trade_return":-0.0219025646
+    "entry_date":"2026-04-24",
+    "exit_date":"2026-05-12",
+    "trade_return":0.0044208931
   },
   {
     "portfolio_id":"active_midcap400",
-    "ticker":"ASH",
-    "entry_date":"2025-02-07",
-    "exit_date":"2025-02-26",
-    "trade_return":-0.0377591133
-  },
-  {
-    "portfolio_id":"active_sp500",
-    "ticker":"ALB",
-    "entry_date":"2025-02-07",
-    "exit_date":"2025-02-25",
-    "trade_return":-0.0073418237
-  },
-  {
-    "portfolio_id":"active_nasdaq100",
-    "ticker":"AMD",
-    "entry_date":"2025-02-21",
-    "exit_date":"2025-02-24",
-    "trade_return":-0.0586852238
+    "ticker":"ACM",
+    "entry_date":"2026-04-24",
+    "exit_date":"2026-05-11",
+    "trade_return":-0.0103324441
   },
   {
     "portfolio_id":"active_midcap400",
-    "ticker":"CRUS",
-    "entry_date":"2025-01-31",
-    "exit_date":"2025-02-11",
-    "trade_return":0.0254606661
+    "ticker":"GPK",
+    "entry_date":"2026-05-08",
+    "exit_date":"2026-05-11",
+    "trade_return":-0.0717528721
+  },
+  {
+    "portfolio_id":"active_sp500",
+    "ticker":"A",
+    "entry_date":"2026-04-24",
+    "exit_date":"2026-05-11",
+    "trade_return":-0.0271450259
+  },
+  {
+    "portfolio_id":"active_sp500",
+    "ticker":"COO",
+    "entry_date":"2026-05-01",
+    "exit_date":"2026-05-11",
+    "trade_return":-0.0623211747
+  },
+  {
+    "portfolio_id":"active_sp500",
+    "ticker":"ABT",
+    "entry_date":"2026-05-08",
+    "exit_date":"2026-05-11",
+    "trade_return":-0.0527765425
   },
   {
     "portfolio_id":"active_midcap400",
-    "ticker":"NBIX",
-    "entry_date":"2024-11-15",
-    "exit_date":"2025-02-07",
-    "trade_return":0.0042588393
+    "ticker":"EXPO",
+    "entry_date":"2026-05-01",
+    "exit_date":"2026-05-07",
+    "trade_return":-0.0559524341
   },
   {
     "portfolio_id":"active_sp500",
-    "ticker":"CDW",
-    "entry_date":"2025-01-17",
-    "exit_date":"2025-02-07",
-    "trade_return":0.0084554866
+    "ticker":"ABT",
+    "entry_date":"2026-04-24",
+    "exit_date":"2026-05-04",
+    "trade_return":-0.0500271621
   },
   {
     "portfolio_id":"active_sp500",
-    "ticker":"AES",
-    "entry_date":"2025-01-31",
-    "exit_date":"2025-02-04",
-    "trade_return":-0.0509839954
-  },
-  {
-    "portfolio_id":"active_nasdaq100",
-    "ticker":"PEP",
-    "entry_date":"2025-01-24",
-    "exit_date":"2025-02-04",
-    "trade_return":-0.0358151858
-  },
-  {
-    "portfolio_id":"active_midcap400",
-    "ticker":"CLF",
-    "entry_date":"2025-01-24",
-    "exit_date":"2025-02-03",
-    "trade_return":-0.0394477869
+    "ticker":"BR",
+    "entry_date":"2026-04-17",
+    "exit_date":"2026-04-24",
+    "trade_return":-0.0526025217
   },
   {
     "portfolio_id":"active_sp500",
-    "ticker":"LMT",
-    "entry_date":"2025-01-03",
-    "exit_date":"2025-01-28",
-    "trade_return":-0.0497902802
-  },
-  {
-    "portfolio_id":"active_nasdaq100",
-    "ticker":"STX",
-    "entry_date":"2025-01-17",
-    "exit_date":"2025-01-28",
-    "trade_return":0.0379917951
-  },
-  {
-    "portfolio_id":"active_sp500",
-    "ticker":"AMAT",
-    "entry_date":"2024-12-20",
-    "exit_date":"2025-01-27",
-    "trade_return":0.0911988645
-  },
-  {
-    "portfolio_id":"active_sp500",
-    "ticker":"AMD",
-    "entry_date":"2025-01-10",
-    "exit_date":"2025-01-27",
-    "trade_return":-0.026823474
-  },
-  {
-    "portfolio_id":"active_midcap400",
-    "ticker":"BMRN",
-    "entry_date":"2024-12-06",
-    "exit_date":"2025-01-14",
-    "trade_return":-0.0460457175
-  },
-  {
-    "portfolio_id":"active_sp500",
-    "ticker":"AES",
-    "entry_date":"2024-12-20",
-    "exit_date":"2025-01-08",
-    "trade_return":0.0032363548
-  },
-  {
-    "portfolio_id":"active_midcap400",
-    "ticker":"ASH",
-    "entry_date":"2024-12-13",
-    "exit_date":"2025-01-02",
-    "trade_return":-0.0530889319
-  },
-  {
-    "portfolio_id":"active_sp500",
-    "ticker":"HII",
-    "entry_date":"2024-12-13",
-    "exit_date":"2024-12-19",
-    "trade_return":-0.0141355602
-  },
-  {
-    "portfolio_id":"active_midcap400",
-    "ticker":"AVTR",
-    "entry_date":"2024-12-06",
-    "exit_date":"2024-12-18",
-    "trade_return":0.0052381243
-  },
-  {
-    "portfolio_id":"active_sp500",
-    "ticker":"AOS",
-    "entry_date":"2024-12-06",
-    "exit_date":"2024-12-18",
-    "trade_return":-0.0591207985
-  },
-  {
-    "portfolio_id":"active_sp500",
-    "ticker":"AES",
-    "entry_date":"2024-12-06",
-    "exit_date":"2024-12-17",
-    "trade_return":-0.0388349934
+    "ticker":"A",
+    "entry_date":"2026-03-13",
+    "exit_date":"2026-04-23",
+    "trade_return":0.0133523869
   }
 ]
