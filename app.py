@@ -1,265 +1,167 @@
-"""
-Smart Momentum - Public Portfolio Dashboard
-Displays live picks, NAV performance, and historical simulation.
-NO proprietary methodology is exposed.
-"""
 import streamlit as st
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 import json
-from pathlib import Path
+import yfinance as yf
+import plotly.graph_objects as go
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
-# ─────────────────────────────────────────────────────────────
-# Page Configuration
-# ─────────────────────────────────────────────────────────────
-st.set_page_config(
-    page_title="Smart Momentum Portfolio",
-    page_icon="📈",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
+st.set_page_config(page_title="Smart Momentum Demo", layout="wide", page_icon="📈")
 
-st.title("📈 Smart Momentum Portfolio")
-st.markdown("Live picks, transparent performance, institutional-grade risk management.")
-st.markdown("---")
-
-# ─────────────────────────────────────────────────────────────
-# Data Loading
-# ─────────────────────────────────────────────────────────────
-DATA_DIR = Path("data")
-
+# ─────────────────────────────────────────────────────────
+# 1. LOAD DATA
+# ─────────────────────────────────────────────────────────
 @st.cache_data
-def load_nav_history():
-    path = DATA_DIR / "nav_history.csv"
-    if path.exists():
-        df = pd.read_csv(path, parse_dates=["date"])
-        return df
-    return pd.DataFrame()
+def load_data():
+    try:
+        nav = pd.read_csv("data/nav_history.csv")
+        nav['date'] = pd.to_datetime(nav['date'])
+    except FileNotFoundError:
+        st.error("Data not available yet. The pipeline is currently running.")
+        st.stop()
+        
+    with open("data/live_picks.json", "r") as f: 
+        picks = json.load(f)
+    with open("data/recent_trades.json", "r") as f: 
+        trades = json.load(f)
+        
+    return nav, picks, trades
 
-@st.cache_data
-def load_live_picks():
-    path = DATA_DIR / "live_picks.json"
-    if path.exists():
-        with open(path, "r") as f:
-            return json.load(f)
-    return []
+nav_df, live_picks, recent_trades = load_data()
 
-@st.cache_data
-def load_ytd_performance():
-    path = DATA_DIR / "ytd_performance.json"
-    if path.exists():
-        with open(path, "r") as f:
-            return json.load(f)
-    return []
+# ─────────────────────────────────────────────────────────
+# 2. FEATURE 1: DYNAMIC TIME WINDOW (T6M vs YTD)
+# ─────────────────────────────────────────────────────────
+max_date = nav_df['date'].max()
 
-@st.cache_data
-def load_recent_trades():
-    path = DATA_DIR / "recent_trades.json"
-    if path.exists():
-        with open(path, "r") as f:
-            return json.load(f)
-    return []
-
-# Load all data
-nav_df = load_nav_history()
-live_picks = load_live_picks()
-ytd_perf = load_ytd_performance()
-recent_trades = load_recent_trades()
-
-if nav_df.empty:
-    st.error("⚠️ No data available yet. The pipeline is currently running.")
-    st.stop()
-
-# ─────────────────────────────────────────────────────────────
-# Section 1: Current Portfolio Performance
-# ─────────────────────────────────────────────────────────────
-st.subheader("💼 Current Portfolio Performance")
-
-col1, col2, col3, col4 = st.columns(4)
-
-# Calculate aggregate metrics
-if ytd_perf:
-    total_port_return = sum(p["portfolio_return"] for p in ytd_perf) / len(ytd_perf)
-    total_bench_return = sum(p["benchmark_return"] for p in ytd_perf) / len(ytd_perf)
-    total_active_return = sum(p["active_return"] for p in ytd_perf) / len(ytd_perf)
-    
-    col1.metric(
-        label="Portfolio Return (YTD)",
-        value=f"{total_port_return*100:+.1f}%",
-        delta=f"vs {total_bench_return*100:+.1f}% Benchmark"
-    )
-    col2.metric(
-        label="Active Return",
-        value=f"{total_active_return*100:+.1f}%",
-        delta="Outperformance" if total_active_return > 0 else "Underperformance"
-    )
-    col3.metric(
-        label="Active Positions",
-        value=len(live_picks),
-        delta="Currently held"
-    )
-    col4.metric(
-        label="Data Freshness",
-        value="Updated",
-        delta=f"{datetime.now().strftime('%H:%M')} today"
-    )
+# Logic: If month <= 6 (Jan-Jun), show Trailing 6 Months. If >= 7 (Jul-Dec), show YTD.
+if max_date.month <= 6:
+    start_date = max_date - relativedelta(months=6)
+    window_label = "Trailing 6 Months"
 else:
-    st.warning("Performance data not yet available.")
+    start_date = pd.Timestamp(year=max_date.year, month=1, day=1)
+    window_label = "Year-to-Date"
 
-st.markdown("---")
+# Filter NAV to the selected window
+window_nav = nav_df[nav_df['date'] >= start_date].copy()
 
-# ─────────────────────────────────────────────────────────────
-# Section 2: Live Picks Table
-# ─────────────────────────────────────────────────────────────
-st.subheader("🎯 Current Holdings")
+# Calculate Window Returns per portfolio
+st.title(f"💼 Smart Momentum Portfolio ({window_label})")
+st.caption(f"Data as of {max_date.strftime('%B %d, %Y')}")
 
-if live_picks:
-    picks_df = pd.DataFrame(live_picks)
-    
-    # Portfolio filter
-    portfolios = ["All"] + sorted(picks_df["portfolio_id"].unique().tolist())
-    selected_port = st.selectbox("Filter by Portfolio", portfolios)
-    
-    if selected_port != "All":
-        picks_df = picks_df[picks_df["portfolio_id"] == selected_port]
-    
-    # Format for display
-    display_df = picks_df.copy()
-    display_df["entry_date"] = pd.to_datetime(display_df["entry_date"]).dt.date
-    display_df["entry_price"] = display_df["entry_price"].apply(lambda x: f"${x:.2f}")
-    display_df["current_price"] = display_df["current_price"].apply(lambda x: f"${x:.2f}")
-    display_df["unrealized_pnl"] = display_df["unrealized_pnl"].apply(lambda x: f"{x*100:+.2f}%")
-    
-    # Rename columns for public display
-    display_df = display_df.rename(columns={
-        "portfolio_id": "Portfolio",
-        "ticker": "Ticker",
-        "entry_date": "Entry Date",
-        "entry_price": "Entry Price",
-        "current_price": "Current Price",
-        "unrealized_pnl": "P&L"
-    })
-    
-    # Drop internal columns
-    if "shares" in display_df.columns:
-        display_df = display_df.drop(columns=["shares"])
-    
-    st.dataframe(display_df, use_container_width=True, hide_index=True)
-else:
-    st.info("No active positions at this time.")
+portfolios = window_nav['portfolio_id'].unique()
+cols = st.columns(len(portfolios))
 
-st.markdown("---")
+for i, port_id in enumerate(portfolios):
+    port_data = window_nav[window_nav['portfolio_id'] == port_id]
+    if port_data.empty: continue
+    
+    port_start = port_data['portfolio_nav'].iloc[0]
+    port_end = port_data['portfolio_nav'].iloc[-1]
+    bench_start = port_data['benchmark_nav'].iloc[0]
+    bench_end = port_data['benchmark_nav'].iloc[-1]
+    
+    port_ret = ((port_end / port_start) - 1) * 100
+    bench_ret = ((bench_end / bench_start) - 1) * 100
+    active_ret = port_ret - bench_ret
+    
+    with cols[i]:
+        st.subheader(port_id.replace('_', ' ').title())
+        st.metric("Portfolio Return", f"{port_ret:.2f}%", f"{active_ret:+.2f}% vs Bench")
+        
+        # Mini NAV Chart
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=port_data['date'], y=port_data['portfolio_nav'], name='Portfolio', line=dict(color='#00A67E', width=3)))
+        fig.add_trace(go.Scatter(x=port_data['date'], y=port_data['benchmark_nav'], name='Benchmark', line=dict(color='gray', width=2, dash='dash')))
+        fig.update_layout(height=250, margin=dict(l=0, r=0, t=10, b=0), showlegend=False, yaxis=dict(showticklabels=False))
+        st.plotly_chart(fig, use_container_width=True)
 
-# ─────────────────────────────────────────────────────────────
-# Section 3: NAV Performance Chart
-# ─────────────────────────────────────────────────────────────
-st.subheader("📊 Portfolio NAV vs Benchmark")
+st.divider()
 
-if not nav_df.empty:
-    # Portfolio selector
-    port_options = nav_df["portfolio_id"].unique().tolist()
-    selected_nav_port = st.selectbox("Select Portfolio for NAV Chart", port_options)
-    
-    nav_filtered = nav_df[nav_df["portfolio_id"] == selected_nav_port].sort_values("date")
-    
-    fig = go.Figure()
-    
-    fig.add_trace(go.Scatter(
-        x=nav_filtered["date"],
-        y=nav_filtered["portfolio_nav"],
-        name="Portfolio NAV",
-        mode="lines",
-        line=dict(color="#00cc96", width=2)
-    ))
-    
-    fig.add_trace(go.Scatter(
-        x=nav_filtered["date"],
-        y=nav_filtered["benchmark_nav"],
-        name="Benchmark NAV",
-        mode="lines",
-        line=dict(color="#636efa", width=2, dash="dash")
-    ))
-    
-    fig.update_layout(
-        title=f"NAV Performance: {selected_nav_port}",
-        xaxis_title="Date",
-        yaxis_title="NAV ($)",
-        height=450,
-        hovermode="x unified",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-    )
-    
-    st.plotly_chart(fig, use_container_width=True)
+# ─────────────────────────────────────────────────────────
+# 3. FEATURE 2: INDIVIDUAL STOCK TRADE ATTRIBUTION CHART
+# ─────────────────────────────────────────────────────────
+st.header("🔍 Trade Attribution & Price Action")
+st.write(f"Visualizing exact entry and exit points for trades executed within the **{window_label}** window.")
 
-st.markdown("---")
+# Gather all unique tickers from picks and trades
+all_tickers = set([p['ticker'] for p in live_picks] + [t['ticker'] for t in recent_trades])
 
-# ─────────────────────────────────────────────────────────────
-# Section 4: Recent Trade Activity
-# ─────────────────────────────────────────────────────────────
-st.subheader("🔄 Recent Trade Activity")
+col1, col2 = st.columns(2)
+with col1:
+    selected_port = st.selectbox("Select Portfolio", portfolios)
+with col2:
+    # Filter tickers that belong to the selected portfolio (if metadata allows), else show all
+    selected_ticker = st.selectbox("Select Ticker", sorted(list(all_tickers)))
 
-if recent_trades:
-    trades_df = pd.DataFrame(recent_trades)
-    
-    # Format for display (NO exit reasons shown - methodology protection)
-    display_trades = trades_df[["portfolio_id", "ticker", "entry_date", "exit_date", "trade_return"]].copy()
-    display_trades["trade_return"] = display_trades["trade_return"].apply(lambda x: f"{x*100:+.2f}%")
-    
-    display_trades = display_trades.rename(columns={
-        "portfolio_id": "Portfolio",
-        "ticker": "Ticker",
-        "entry_date": "Entry",
-        "exit_date": "Exit",
-        "trade_return": "Return"
-    })
-    
-    st.dataframe(display_trades, use_container_width=True, hide_index=True)
-else:
-    st.info("No recent trades to display.")
+if selected_ticker:
+    with st.spinner(f"Fetching price history for {selected_ticker}..."):
+        # Fetch a bit before the window start to provide visual context
+        fetch_start = start_date - relativedelta(months=1)
+        ticker_obj = yf.Ticker(selected_ticker)
+        hist = ticker_obj.history(start=fetch_start, end=max_date + pd.Timedelta(days=1))
+        
+        if hist.empty:
+            st.warning(f"Could not fetch price data for {selected_ticker}.")
+        else:
+            fig = go.Figure()
+            
+            # Plot the daily close price
+            fig.add_trace(go.Scatter(
+                x=hist.index, 
+                y=hist['Close'], 
+                mode='lines', 
+                name='Daily Close', 
+                line=dict(color='#1f77b4', width=2)
+            ))
+            
+            # Highlight the evaluation window background
+            fig.add_vrect(x0=start_date, x1=max_date, fillcolor="green", opacity=0.05, line_width=0, annotation_text=f"   {window_label} Window", annotation_position="top left")
 
-st.markdown("---")
+            # --- MARK ENTRIES ---
+            entries = [t for t in recent_trades if t['ticker'] == selected_ticker and pd.to_datetime(t['entry_date']) >= start_date]
+            entries += [p for p in live_picks if p['ticker'] == selected_ticker and pd.to_datetime(p['entry_date']) >= start_date]
+            
+            if entries:
+                entry_dates = [pd.to_datetime(e['entry_date']) for e in entries]
+                entry_prices = [float(e['entry_price']) for e in entries]
+                fig.add_trace(go.Scatter(
+                    x=entry_dates, y=entry_prices, mode='markers+text', name='Entry',
+                    marker=dict(symbol='triangle-up', size=15, color='green', line=dict(width=2, color='black')),
+                    text=[f"${p:.2f}" for p in entry_prices], textposition="top center", textfont=dict(color="green", size=12)
+                ))
 
-# ─────────────────────────────────────────────────────────────
-# Section 5: Historical Performance (Sanitized)
-# ─────────────────────────────────────────────────────────────
-st.subheader("📈 Historical Performance")
+            # --- MARK EXITS (Closed Trades) ---
+            exits = [t for t in recent_trades if t['ticker'] == selected_ticker and pd.to_datetime(t['exit_date']) >= start_date]
+            if exits:
+                exit_dates = [pd.to_datetime(e['exit_date']) for e in exits]
+                # Estimate exit price based on entry price and trade return if exact exit price isn't in JSON
+                exit_prices = [float(e['entry_price']) * (1 + float(e['trade_return'])) for e in exits]
+                fig.add_trace(go.Scatter(
+                    x=exit_dates, y=exit_prices, mode='markers+text', name='Exit',
+                    marker=dict(symbol='triangle-down', size=15, color='red', line=dict(width=2, color='black')),
+                    text=[f"${p:.2f}" for p in exit_prices], textposition="bottom center", textfont=dict(color="red", size=12)
+                ))
 
-if not nav_df.empty:
-    # Calculate year-by-year returns
-    nav_df["year"] = nav_df["date"].dt.year
-    
-    annual_returns = nav_df.groupby(["portfolio_id", "year"]).agg(
-        start_nav=("portfolio_nav", "first"),
-        end_nav=("portfolio_nav", "last"),
-        start_bench=("benchmark_nav", "first"),
-        end_bench=("benchmark_nav", "last")
-    ).reset_index()
-    
-    annual_returns["port_return"] = (annual_returns["end_nav"] / annual_returns["start_nav"]) - 1
-    annual_returns["bench_return"] = (annual_returns["end_bench"] / annual_returns["start_bench"]) - 1
-    annual_returns["active_return"] = annual_returns["port_return"] - annual_returns["bench_return"]
-    
-    # Create heatmap
-    heatmap_data = annual_returns.pivot(index="year", columns="portfolio_id", values="active_return")
-    
-    fig_heat = px.imshow(
-        heatmap_data,
-        text_auto=".1%",
-        color_continuous_scale="RdYlGn",
-        title="Active Return vs Benchmark by Year",
-        labels=dict(x="Portfolio", y="Year", color="Active Return")
-    )
-    fig_heat.update_layout(height=400)
-    st.plotly_chart(fig_heat, use_container_width=True)
+            # --- MARK CURRENT HOLDINGS (Open Positions) ---
+            opens = [p for p in live_picks if p['ticker'] == selected_ticker and pd.to_datetime(p['entry_date']) >= start_date]
+            if opens:
+                current_prices = [float(p['current_price']) for p in opens]
+                fig.add_trace(go.Scatter(
+                    x=[max_date] * len(opens), y=current_prices, mode='markers+text', name='Current Price',
+                    marker=dict(symbol='circle', size=12, color='blue', line=dict(width=2, color='black')),
+                    text=[f"${p:.2f}" for p in current_prices], textposition="top right", textfont=dict(color="blue", size=12)
+                ))
 
-# ─────────────────────────────────────────────────────────────
-# Footer
-# ─────────────────────────────────────────────────────────────
-st.markdown("---")
-st.caption(
-    "Smart Momentum Portfolio | Institutional-grade active management | "
-    "Data updated every 2 hours during market hours | "
-    "Past performance does not guarantee future results."
-)
+            fig.update_layout(
+                title=f"{selected_ticker} Price Action ({window_label})",
+                xaxis_title="Date",
+                yaxis_title="Price ($)",
+                height=500,
+                hovermode="x unified",
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+            )
+            st.plotly_chart(fig, use_container_width=True)
+
+st.divider()
+st.caption("Data generated automatically by the Smart Momentum Core Pipeline.")
