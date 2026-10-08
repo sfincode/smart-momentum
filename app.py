@@ -34,7 +34,6 @@ nav_df, live_picks, recent_trades = load_data()
 # ─────────────────────────────────────────────────────────
 max_date = nav_df['date'].max()
 
-# Logic: If month <= 6 (Jan-Jun), show Trailing 6 Months. If >= 7 (Jul-Dec), show YTD.
 if max_date.month <= 6:
     start_date = max_date - relativedelta(months=6)
     window_label = "Trailing 6 Months"
@@ -42,10 +41,8 @@ else:
     start_date = pd.Timestamp(year=max_date.year, month=1, day=1)
     window_label = "Year-to-Date"
 
-# Filter NAV to the selected window
 window_nav = nav_df[nav_df['date'] >= start_date].copy()
 
-# Calculate Window Returns per portfolio
 st.title(f"💼 Smart Momentum Portfolio ({window_label})")
 st.caption(f"Data as of {max_date.strftime('%B %d, %Y')}")
 
@@ -69,7 +66,6 @@ for i, port_id in enumerate(portfolios):
         st.subheader(port_id.replace('_', ' ').title())
         st.metric("Portfolio Return", f"{port_ret:.2f}%", f"{active_ret:+.2f}% vs Bench")
         
-        # Mini NAV Chart
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=port_data['date'], y=port_data['portfolio_nav'], name='Portfolio', line=dict(color='#00A67E', width=3)))
         fig.add_trace(go.Scatter(x=port_data['date'], y=port_data['benchmark_nav'], name='Benchmark', line=dict(color='gray', width=2, dash='dash')))
@@ -84,19 +80,16 @@ st.divider()
 st.header("🔍 Trade Attribution & Price Action")
 st.write(f"Visualizing exact entry and exit points for trades executed within the **{window_label}** window.")
 
-# Gather all unique tickers from picks and trades
 all_tickers = set([p['ticker'] for p in live_picks] + [t['ticker'] for t in recent_trades])
 
 col1, col2 = st.columns(2)
 with col1:
     selected_port = st.selectbox("Select Portfolio", portfolios)
 with col2:
-    # Filter tickers that belong to the selected portfolio (if metadata allows), else show all
     selected_ticker = st.selectbox("Select Ticker", sorted(list(all_tickers)))
 
 if selected_ticker:
     with st.spinner(f"Fetching price history for {selected_ticker}..."):
-        # Fetch a bit before the window start to provide visual context
         fetch_start = start_date - relativedelta(months=1)
         ticker_obj = yf.Ticker(selected_ticker)
         hist = ticker_obj.history(start=fetch_start, end=max_date + pd.Timedelta(days=1))
@@ -108,23 +101,37 @@ if selected_ticker:
             
             # Plot the daily close price
             fig.add_trace(go.Scatter(
-                x=hist.index, 
-                y=hist['Close'], 
-                mode='lines', 
-                name='Daily Close', 
+                x=hist.index, y=hist['Close'], mode='lines', name='Daily Close', 
                 line=dict(color='#1f77b4', width=2)
             ))
             
             # Highlight the evaluation window background
             fig.add_vrect(x0=start_date, x1=max_date, fillcolor="green", opacity=0.05, line_width=0, annotation_text=f"   {window_label} Window", annotation_position="top left")
 
+            # Helper function to find the exact price on a specific date from the yfinance data
+            def get_price_on_date(target_date, hist_df):
+                if target_date in hist_df.index:
+                    return hist_df.loc[target_date, 'Close']
+                # Fallback for weekends/holidays: find the closest prior trading day
+                mask = hist_df.index <= target_date
+                if mask.any():
+                    return hist_df.loc[mask, 'Close'].iloc[-1]
+                return None
+
             # --- MARK ENTRIES ---
             entries = [t for t in recent_trades if t['ticker'] == selected_ticker and pd.to_datetime(t['entry_date']) >= start_date]
             entries += [p for p in live_picks if p['ticker'] == selected_ticker and pd.to_datetime(p['entry_date']) >= start_date]
             
-            if entries:
-                entry_dates = [pd.to_datetime(e['entry_date']) for e in entries]
-                entry_prices = [float(e['entry_price']) for e in entries]
+            entry_dates = []
+            entry_prices = []
+            for e in entries:
+                ed = pd.to_datetime(e['entry_date'])
+                price = get_price_on_date(ed, hist)
+                if price is not None:
+                    entry_dates.append(ed)
+                    entry_prices.append(price)
+
+            if entry_dates:
                 fig.add_trace(go.Scatter(
                     x=entry_dates, y=entry_prices, mode='markers+text', name='Entry',
                     marker=dict(symbol='triangle-up', size=15, color='green', line=dict(width=2, color='black')),
@@ -133,10 +140,17 @@ if selected_ticker:
 
             # --- MARK EXITS (Closed Trades) ---
             exits = [t for t in recent_trades if t['ticker'] == selected_ticker and pd.to_datetime(t['exit_date']) >= start_date]
-            if exits:
-                exit_dates = [pd.to_datetime(e['exit_date']) for e in exits]
-                # Estimate exit price based on entry price and trade return if exact exit price isn't in JSON
-                exit_prices = [float(e['entry_price']) * (1 + float(e['trade_return'])) for e in exits]
+            
+            exit_dates = []
+            exit_prices = []
+            for e in exits:
+                ed = pd.to_datetime(e['exit_date'])
+                price = get_price_on_date(ed, hist)
+                if price is not None:
+                    exit_dates.append(ed)
+                    exit_prices.append(price)
+
+            if exit_dates:
                 fig.add_trace(go.Scatter(
                     x=exit_dates, y=exit_prices, mode='markers+text', name='Exit',
                     marker=dict(symbol='triangle-down', size=15, color='red', line=dict(width=2, color='black')),
@@ -146,12 +160,21 @@ if selected_ticker:
             # --- MARK CURRENT HOLDINGS (Open Positions) ---
             opens = [p for p in live_picks if p['ticker'] == selected_ticker and pd.to_datetime(p['entry_date']) >= start_date]
             if opens:
-                current_prices = [float(p['current_price']) for p in opens]
-                fig.add_trace(go.Scatter(
-                    x=[max_date] * len(opens), y=current_prices, mode='markers+text', name='Current Price',
-                    marker=dict(symbol='circle', size=12, color='blue', line=dict(width=2, color='black')),
-                    text=[f"${p:.2f}" for p in current_prices], textposition="top right", textfont=dict(color="blue", size=12)
-                ))
+                current_dates = []
+                current_prices = []
+                for p in opens:
+                    # Use the latest date in the chart for the current price
+                    price = get_price_on_date(max_date, hist)
+                    if price is not None:
+                        current_dates.append(max_date)
+                        current_prices.append(price)
+                
+                if current_dates:
+                    fig.add_trace(go.Scatter(
+                        x=current_dates, y=current_prices, mode='markers+text', name='Current Price',
+                        marker=dict(symbol='circle', size=12, color='blue', line=dict(width=2, color='black')),
+                        text=[f"${p:.2f}" for p in current_prices], textposition="top right", textfont=dict(color="blue", size=12)
+                    ))
 
             fig.update_layout(
                 title=f"{selected_ticker} Price Action ({window_label})",
